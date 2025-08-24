@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Params }) {
         {categoryLabel}
       </Heading>
       <div className="prose prose-xl prose-invert mb-10">
-        Menampilkan hasil kerja dari bidang {categoryLabel}.
+        Ini hasil kerja saya pada bidang {categoryLabel}.
       </div>
       <ContentList
         items={projects}
