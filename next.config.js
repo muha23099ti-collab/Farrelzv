@@ -1,9 +1,4 @@
-const nextConfig = {
-  // PERBAIKAN: Menambahkan konfigurasi ini untuk mengatasi error Vercel
-  webpack: (config) => {
-    config.externals.push('troika-three-text');
-    return config;
-  },
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {}
 
-module.exports = nextConfig;
+module.exports = nextConfig
