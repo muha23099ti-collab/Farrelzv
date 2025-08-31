@@ -1,43 +1,45 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { SliceZone } from "@prismicio/react";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
-import ContentBody from "@/components/ContentBody";
 
-type Params = { uid: string };
-
-export default async function Page({ params }: { params: Params }) {
+export async function generateMetadata(): Promise<Metadata> {
   const client = createClient();
-  const page = await client
-    .getByUID("project", params.uid)
-    .catch(() => notFound());
-
-  return <ContentBody page={page} />;
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Params;
-}): Promise<Metadata> {
-  const client = createClient();
-  const page = await client
-    .getByUID("project", params.uid)
-    .catch(() => notFound());
+  const page = await client.getSingle("homepage").catch(() => null);
 
   return {
-    title: page.data.meta_title || page.data.title,
-    description: page.data.meta_description,
+    title: page?.data.meta_title,
+    description: page?.data.meta_description,
   };
 }
 
-export async function generateStaticParams() {
+export default async function Page() {
   const client = createClient();
-  const pages = await client.getAllByType("project");
 
-  return pages.map((page) => {
-    return { uid: page.uid };
+  // Hapus .catch() agar kita bisa menangani error secara eksplisit
+  const page = await client.getSingle("homepage").catch(() => {
+    // Jika ada error (misal, API key salah atau network error), catat dan kembalikan null
+    console.error("Failed to fetch 'homepage' data from Prismic.");
+    return null;
   });
+
+  // Jika halaman tidak ada atau gagal dimuat, tampilkan pesan error
+  // Ini lebih baik daripada langsung ke halaman 404
+  if (!page) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '80vh',
+        fontFamily: 'sans-serif'
+       }}>
+        <h1>Konten Halaman Utama tidak ditemukan.</h1>
+        <p style={{marginTop: '1rem'}}></p>
+      </div>
+    );
+  }
+
+  return <SliceZone slices={page.data.slices} components={components} />;
 }
