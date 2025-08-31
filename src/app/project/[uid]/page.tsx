@@ -1,39 +1,43 @@
-// File: src/app/page.tsx
-
 import { Metadata } from "next";
-import { SliceZone } from "@prismicio/react";
 import { notFound } from "next/navigation";
+import { SliceZone } from "@prismicio/react";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
+import ContentBody from "@/components/ContentBody";
 
-// Komponen Halaman Utama
-export default async function Page() {
+type Params = { uid: string };
+
+export default async function Page({ params }: { params: Params }) {
   const client = createClient();
+  const page = await client
+    .getByUID("project", params.uid)
+    .catch(() => notFound());
 
-  // Mencoba mengambil data, jika gagal atau tidak ada, 'page' akan menjadi null
-  const page = await client.getSingle("homepage").catch(() => null);
-
-  // Jika 'page' adalah null, panggil fungsi notFound() untuk render halaman 404
-  if (!page) {
-    notFound();
-  }
-
-  return <SliceZone slices={page.data.slices} components={components} />;
+  return <ContentBody page={page} />;
 }
 
-
-// Fungsi untuk Metadata
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Params;
+}): Promise<Metadata> {
   const client = createClient();
-  
-  // Mencoba mengambil data, jika gagal atau tidak ada, 'page' akan menjadi null
-  const page = await client.getSingle("homepage").catch(() => null);
+  const page = await client
+    .getByUID("project", params.uid)
+    .catch(() => notFound());
 
-  // Jika 'page' ditemukan, gunakan meta datanya.
-  // Jika tidak, gunakan judul dan deskripsi default.
   return {
-    title: page?.data.meta_title ?? "Portfolio",
-    description: page?.data.meta_description ?? "Selamat datang di portfolio saya.",
+    title: page.data.meta_title || page.data.title,
+    description: page.data.meta_description,
   };
+}
+
+export async function generateStaticParams() {
+  const client = createClient();
+  const pages = await client.getAllByType("project");
+
+  return pages.map((page) => {
+    return { uid: page.uid };
+  });
 }
