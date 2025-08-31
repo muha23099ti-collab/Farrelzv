@@ -7,13 +7,14 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
 
+// Komponen Halaman Utama
 export default async function Page() {
   const client = createClient();
 
-  // Kita gunakan .catch() untuk menangani jika dokumen tidak ada
+  // Mencoba mengambil data, jika gagal atau tidak ada, 'page' akan menjadi null
   const page = await client.getSingle("homepage").catch(() => null);
 
-  // Jika halaman tidak ada, panggil notFound() agar Next.js menampilkan halaman 404
+  // Jika 'page' adalah null, panggil fungsi notFound() untuk render halaman 404
   if (!page) {
     notFound();
   }
@@ -21,13 +22,18 @@ export default async function Page() {
   return <SliceZone slices={page.data.slices} components={components} />;
 }
 
+
+// Fungsi untuk Metadata
 export async function generateMetadata(): Promise<Metadata> {
   const client = createClient();
+  
+  // Mencoba mengambil data, jika gagal atau tidak ada, 'page' akan menjadi null
   const page = await client.getSingle("homepage").catch(() => null);
 
-  // Beri nilai default jika page tidak ada
+  // Jika 'page' ditemukan, gunakan meta datanya.
+  // Jika tidak, gunakan judul dan deskripsi default.
   return {
-    title: page?.data.meta_title || "Homepage",
-    description: page?.data.meta_description || "Welcome to my portfolio.",
+    title: page?.data.meta_title ?? "Portfolio",
+    description: page?.data.meta_description ?? "Selamat datang di portfolio saya.",
   };
 }
