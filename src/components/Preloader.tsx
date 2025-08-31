@@ -5,83 +5,80 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 
 export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
-  const [stage, setStage] = useState(0); // 0: Fz, 1: Ceklis, 2: Tirai
+  const [stage, setStage] = useState(0); // 0: Fz, 1: Ceklis
 
-  // Rangkaian animasi menggunakan setTimeout untuk stabilitas
+  // Menggunakan useEffect untuk mengontrol alur animasi
   useEffect(() => {
-    // Pindah ke tahap ceklis setelah animasi Fz selesai
+    // Timer untuk transisi dari Fz ke Ceklis (setelah ~2 detik)
     const toCheckmarkTimer = setTimeout(() => {
       setStage(1);
-    }, 2500); // Durasi Fz (kurang lebih)
+    }, 2000);
 
-    // Pindah ke tahap tirai setelah animasi ceklis selesai
-    const toCurtainTimer = setTimeout(() => {
-      setStage(2);
-    }, 4000); // Waktu Fz + durasi Ceklis
-
-    // Hilangkan preloader setelah tirai terbuka
-    const exitTimer = setTimeout(() => {
+    // Timer untuk memicu animasi keluar/tirai (setelah ~3.5 detik)
+    const endLoadingTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // Waktu total + durasi Tirai
+    }, 3500);
 
+    // Membersihkan timer saat komponen di-unmount
     return () => {
       clearTimeout(toCheckmarkTimer);
-      clearTimeout(toCurtainTimer);
-      clearTimeout(exitTimer);
+      clearTimeout(endLoadingTimer);
     };
-  }, []);
+  }, []); // Dijalankan hanya sekali
 
+  // Varian untuk menggambar SVG
   const svgParentVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.2 },
     },
   };
-
+  
   const pathVariants: Variants = {
     hidden: { pathLength: 0 },
     visible: {
       pathLength: 1,
-      transition: {
-        duration: 1.5,
-        ease: "easeInOut",
-      },
+      transition: { duration: 1.5, ease: "easeInOut" },
     },
   };
 
-  const curtainLeftVariant: Variants = {
-    closed: { y: 0 },
-    open: {
-      y: "-100%",
-      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1] },
-    },
-  };
-
-  const curtainRightVariant: Variants = {
-    closed: { y: 0 },
-    open: {
-      y: "100%",
-      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1] },
+  // Varian untuk tirai yang akan membuka saat preloader keluar
+  const curtainVariant: Variants = {
+    initial: { y: 0 },
+    exit: {
+      y: (i: number) => (i === 0 ? "100%" : "-100%"), // Kiri ke bawah, Kanan ke atas
+      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1], delay: 0.2 },
     },
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isLoading && (
-        <div className="fixed inset-0 z-[1000] overflow-hidden">
-          {/* Latar belakang yang berubah warna */}
+        // Kontainer utama preloader yang akan dianimasikan saat keluar
+        <motion.div 
+            key="preloader"
+            className="fixed inset-0 z-[1000] flex"
+        >
+          {/* Tirai Kiri (sebagai bagian dari animasi keluar) */}
           <motion.div
-            className="absolute inset-0"
-            initial={{ backgroundColor: "#0d1117" }}
-            animate={stage >= 1 ? { backgroundColor: "#FFFFFF" } : {}}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="h-full w-1/2 bg-[#0d1117]"
+            custom={0}
+            variants={curtainVariant}
+            initial="initial"
+            exit="exit"
+          />
+          {/* Tirai Kanan (sebagai bagian dari animasi keluar) */}
+          <motion.div
+            className="h-full w-1/2 bg-[#0d1117]"
+            custom={1}
+            variants={curtainVariant}
+            initial="initial"
+            exit="exit"
           />
 
-          {/* Kontainer SVG di tengah */}
-          <div className="relative z-10 flex h-full w-full items-center justify-center">
+          {/* Lapisan Konten SVG di atas segalanya */}
+          <div className="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
             <AnimatePresence mode="wait">
               {/* Tahap 0: Animasi Fz */}
               {stage === 0 && (
@@ -120,7 +117,7 @@ export default function Preloader() {
                   <motion.path
                     d="M30 80 L65 115 L120 40"
                     fill="transparent"
-                    stroke="#0d1117"
+                    stroke="#FFFFFF"
                     strokeWidth="8"
                     variants={pathVariants}
                   />
@@ -128,23 +125,7 @@ export default function Preloader() {
               )}
             </AnimatePresence>
           </div>
-
-          {/* Lapisan Tirai */}
-          <div className="absolute inset-0 flex pointer-events-none">
-            <motion.div
-              className="h-full w-1-2 bg-[#FFFFFF]"
-              variants={curtainLeftVariant}
-              initial="closed"
-              animate={stage >= 2 ? "open" : "closed"}
-            />
-            <motion.div
-              className="h-full w-1-2 bg-[#FFFFFF]"
-              variants={curtainRightVariant}
-              initial="closed"
-              animate={stage >= 2 ? "open" : "closed"}
-            />
-          </div>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
