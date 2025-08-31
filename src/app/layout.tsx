@@ -7,6 +7,7 @@ import { createClient, repositoryName } from "@/prismicio";
 
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import Preloader from "@/components/Preloader"; // Import Preloader
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 
@@ -17,9 +18,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: settings.data.meta_title,
     description: settings.data.meta_description,
-    // openGraph: {
-    //   images: [settings.data.og_image?.url || ""],
-    // },
   };
 }
 
@@ -31,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-slate-900">
       <body className={clsx(urbanist.className, "relative min-h-screen")}>
+        <Preloader /> {/* Cukup tambahkan Preloader di sini */}
         <Header />
         {children}
         <div className="background-gradient absolute inset-0 -z-50 max-h-screen" />
@@ -41,3 +40,4 @@ export default function RootLayout({
     </html>
   );
 }
+
