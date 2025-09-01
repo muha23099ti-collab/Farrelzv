@@ -8,7 +8,7 @@ import { createClient, repositoryName } from "@/prismicio";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Preloader from "@/components/Preloader";
-import { PreloaderProvider } from "@/providers/PreloaderProvider"; // <-- IMPORT PROVIDER
+import { PreloaderProvider } from "@/providers/PreloaderProvider"; // Pastikan ini ada
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 
@@ -30,8 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-slate-900">
       <body className={clsx(urbanist.className, "relative min-h-screen")}>
-        {/* BUNGKUS DENGAN PROVIDER */}
-        <PreloaderProvider>
+        <PreloaderProvider> {/* Hanya PreloaderProvider yang membungkus */}
           <Preloader />
           <Header />
           {children}
