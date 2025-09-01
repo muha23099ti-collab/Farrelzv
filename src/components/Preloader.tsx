@@ -1,36 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
 export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
   const [stage, setStage] = useState(0); // 0: Fz, 1: Ceklis, 2: Tirai
 
-  // Rangkaian animasi menggunakan setTimeout untuk stabilitas
-  useEffect(() => {
-    // Pindah ke tahap ceklis setelah animasi Fz selesai
-    const toCheckmarkTimer = setTimeout(() => {
-      setStage(1);
-    }, 2500); // Durasi Fz (kurang lebih)
-
-    // Pindah ke tahap tirai setelah animasi ceklis selesai
-    const toCurtainTimer = setTimeout(() => {
-      setStage(2);
-    }, 4000); // Waktu Fz + durasi Ceklis
-
-    // Hilangkan preloader setelah tirai terbuka
-    const exitTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 5000); // Waktu total + durasi Tirai
-
-    return () => {
-      clearTimeout(toCheckmarkTimer);
-      clearTimeout(toCurtainTimer);
-      clearTimeout(exitTimer);
-    };
-  }, []);
-
+  // Varian untuk mengontrol urutan munculnya garis-garis SVG
   const svgParentVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -40,7 +17,8 @@ export default function Preloader() {
       },
     },
   };
-
+  
+  // Varian animasi untuk menggambar garis SVG
   const pathVariants: Variants = {
     hidden: { pathLength: 0 },
     visible: {
@@ -52,18 +30,11 @@ export default function Preloader() {
     },
   };
 
-  const curtainLeftVariant: Variants = {
+  // Varian untuk tirai (kedua sisi bergerak ke atas)
+  const curtainVariant: Variants = {
     closed: { y: 0 },
     open: {
-      y: "-100%",
-      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1] },
-    },
-  };
-
-  const curtainRightVariant: Variants = {
-    closed: { y: 0 },
-    open: {
-      y: "100%",
+      y: "-100%", // Bergerak ke atas
       transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1] },
     },
   };
@@ -72,12 +43,9 @@ export default function Preloader() {
     <AnimatePresence>
       {isLoading && (
         <div className="fixed inset-0 z-[1000] overflow-hidden">
-          {/* Latar belakang yang berubah warna */}
+          {/* Latar belakang hitam solid yang tidak berubah */}
           <motion.div
-            className="absolute inset-0"
-            initial={{ backgroundColor: "#0d1117" }}
-            animate={stage >= 1 ? { backgroundColor: "#FFFFFF" } : {}}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute inset-0 bg-[#0d1117]"
           />
 
           {/* Kontainer SVG di tengah */}
@@ -94,6 +62,7 @@ export default function Preloader() {
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0 }}
+                  onAnimationComplete={() => setStage(1)} // Pindah ke tahap 1 setelah Fz selesai
                 >
                   {/* Huruf "F" */}
                   <motion.line x1="40" y1="40" x2="40" y2="110" stroke="#FFFFFF" strokeWidth="5" variants={pathVariants} />
@@ -116,11 +85,12 @@ export default function Preloader() {
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0 }}
+                  onAnimationComplete={() => setStage(2)} // Pindah ke tahap 2 (tirai) setelah ceklis selesai
                 >
                   <motion.path
                     d="M30 80 L65 115 L120 40"
                     fill="transparent"
-                    stroke="#0d1117"
+                    stroke="#FFFFFF" // Warna garis ceklis putih
                     strokeWidth="8"
                     variants={pathVariants}
                   />
@@ -132,16 +102,21 @@ export default function Preloader() {
           {/* Lapisan Tirai */}
           <div className="absolute inset-0 flex pointer-events-none">
             <motion.div
-              className="h-full w-1-2 bg-[#FFFFFF]"
-              variants={curtainLeftVariant}
+              className="h-full w-1/2 bg-[#0d1117]"
+              variants={curtainVariant} // Menggunakan varian yang sama
               initial="closed"
               animate={stage >= 2 ? "open" : "closed"}
             />
             <motion.div
-              className="h-full w-1-2 bg-[#FFFFFF]"
-              variants={curtainRightVariant}
+              className="h-full w-1/2 bg-[#0d1117]"
+              variants={curtainVariant} // Menggunakan varian yang sama
               initial="closed"
               animate={stage >= 2 ? "open" : "closed"}
+              onAnimationComplete={() => {
+                if (stage === 2) {
+                  setIsLoading(false); // Hilangkan preloader setelah tirai terbuka
+                }
+              }}
             />
           </div>
         </div>
