@@ -49,7 +49,6 @@ export default function Preloader() {
             className="h-full w-1/2 bg-[#0d1117]"
             custom={0}
             variants={curtainVariant}
-            initial={false} // Tidak ada animasi masuk
             exit="exit"
           />
           {/* Tirai Kanan */}
@@ -57,12 +56,14 @@ export default function Preloader() {
             className="h-full w-1/2 bg-[#0d1117]"
             custom={1}
             variants={curtainVariant}
-            initial={false}
             exit="exit"
           />
 
           {/* Lapisan Konten SVG di atas segalanya */}
-          <div className="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
+          <motion.div
+            className="absolute inset-0 z-20 flex h-full w-full items-center justify-center"
+            exit={{ opacity: 0, transition: { duration: 0.3 } }} // SVG akan fade out saat tirai membuka
+          >
             <AnimatePresence mode="wait">
               {/* Tahap 0: Animasi Fz */}
               {stage === 0 && (
@@ -110,7 +111,7 @@ export default function Preloader() {
                 </motion.svg>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
