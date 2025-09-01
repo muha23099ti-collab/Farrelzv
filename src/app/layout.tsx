@@ -8,7 +8,7 @@ import { createClient, repositoryName } from "@/prismicio";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Preloader from "@/components/Preloader";
-import { PreloaderProvider } from "@/providers/PreloaderProvider"; // Pastikan ini ada
+import { PreloaderProvider } from "@/providers/PreloaderProvider";
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 
