@@ -5,7 +5,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 
 export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
-  const [stage, setStage] = useState(0); // 0: Fz, 1: Ceklis, 2: Tirai
+  const [stage, setStage] = useState(0); // 0: Fz, 1: Ceklis
 
   // Varian untuk mengontrol urutan munculnya garis-garis SVG
   const svgParentVariants: Variants = {
@@ -30,26 +30,39 @@ export default function Preloader() {
     },
   };
 
-  // Varian untuk tirai (kedua sisi bergerak ke atas)
+  // Varian untuk tirai, sekarang sebagai properti `exit`
   const curtainVariant: Variants = {
-    closed: { y: 0 },
-    open: {
-      y: "-100%", // Bergerak ke atas
-      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1] },
-    },
+    // Properti custom (i) akan menentukan arah: 0 untuk kiri, 1 untuk kanan
+    exit: (i: number) => ({
+      y: i === 0 ? "100%" : "-100%", // Tirai kiri ke bawah, kanan ke atas
+      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1], delay: 0.2 },
+    }),
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait" onExitComplete={() => setIsLoading(false)}>
       {isLoading && (
-        <div className="fixed inset-0 z-[1000] overflow-hidden">
-          {/* Latar belakang hitam solid yang tidak berubah */}
+        // Wrapper utama yang akan memiliki animasi exit tirai
+        <motion.div className="fixed inset-0 z-[1000] flex">
+          {/* Tirai Kiri */}
           <motion.div
-            className="absolute inset-0 bg-[#0d1117]"
+            className="h-full w-1/2 bg-[#0d1117]"
+            custom={0}
+            variants={curtainVariant}
+            initial={false} // Tidak ada animasi masuk
+            exit="exit"
+          />
+          {/* Tirai Kanan */}
+          <motion.div
+            className="h-full w-1/2 bg-[#0d1117]"
+            custom={1}
+            variants={curtainVariant}
+            initial={false}
+            exit="exit"
           />
 
-          {/* Kontainer SVG di tengah */}
-          <div className="relative z-10 flex h-full w-full items-center justify-center">
+          {/* Lapisan Konten SVG di atas segalanya */}
+          <div className="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
             <AnimatePresence mode="wait">
               {/* Tahap 0: Animasi Fz */}
               {stage === 0 && (
@@ -62,7 +75,7 @@ export default function Preloader() {
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0 }}
-                  onAnimationComplete={() => setStage(1)} // Pindah ke tahap 1 setelah Fz selesai
+                  onAnimationComplete={() => setStage(1)}
                 >
                   {/* Huruf "F" */}
                   <motion.line x1="40" y1="40" x2="40" y2="110" stroke="#FFFFFF" strokeWidth="5" variants={pathVariants} />
@@ -85,12 +98,12 @@ export default function Preloader() {
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0 }}
-                  onAnimationComplete={() => setStage(2)} // Pindah ke tahap 2 (tirai) setelah ceklis selesai
+                  onAnimationComplete={() => setIsLoading(false)} // Memicu animasi keluar/tirai
                 >
                   <motion.path
                     d="M30 80 L65 115 L120 40"
                     fill="transparent"
-                    stroke="#FFFFFF" // Warna garis ceklis putih
+                    stroke="#FFFFFF"
                     strokeWidth="8"
                     variants={pathVariants}
                   />
@@ -98,28 +111,7 @@ export default function Preloader() {
               )}
             </AnimatePresence>
           </div>
-
-          {/* Lapisan Tirai */}
-          <div className="absolute inset-0 flex pointer-events-none">
-            <motion.div
-              className="h-full w-1/2 bg-[#0d1117]"
-              variants={curtainVariant} // Menggunakan varian yang sama
-              initial="closed"
-              animate={stage >= 2 ? "open" : "closed"}
-            />
-            <motion.div
-              className="h-full w-1/2 bg-[#0d1117]"
-              variants={curtainVariant} // Menggunakan varian yang sama
-              initial="closed"
-              animate={stage >= 2 ? "open" : "closed"}
-              onAnimationComplete={() => {
-                if (stage === 2) {
-                  setIsLoading(false); // Hilangkan preloader setelah tirai terbuka
-                }
-              }}
-            />
-          </div>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
