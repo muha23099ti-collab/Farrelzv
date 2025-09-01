@@ -20,35 +20,36 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
   const { isLoaded } = usePreloaderState();
 
   useEffect(() => {
-    // Jalankan animasi hanya ketika preloader sudah benar-benar selesai
     if (isLoaded) {
       let ctx = gsap.context(() => {
-        // Buat timeline animasi agar lebih terstruktur
-        gsap
-          .timeline()
-          .fromTo(
-            ".hero-content", // Targetkan pembungkus konten teks
-            { opacity: 0, y: 40 }, // Mulai dari transparan dan sedikit di bawah
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power3.out",
-            },
-          )
-          .fromTo(
-            ".shapes-container", // Targetkan pembungkus 3D shapes
-            { opacity: 0, y: 40 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power3.out",
-            },
-            "-=0.8", // Mulai animasi ini 0.8 detik sebelum animasi sebelumnya selesai
-          );
+        const tl = gsap.timeline();
+
+        // PERUBAHAN: Animasi untuk teks dan job title
+        tl.fromTo(
+          ".hero-content",
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9, // Durasi lebih cepat untuk teks
+            ease: "power3.out",
+          },
+        );
+
+        // PERUBAHAN: Animasi untuk puzzle (Shapes)
+        tl.fromTo(
+          ".shapes-container",
+          { opacity: 0, y: 60 }, // Mulai sedikit lebih bawah
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.5, // Durasi lebih lambat agar terasa lebih smooth
+            ease: "power3.out",
+          },
+          "-=0.6", // Mulai animasi ini 0.6 detik sebelum animasi teks selesai
+        );
       }, component);
-      return () => ctx.revert(); // cleanup!
+      return () => ctx.revert();
     }
   }, [isLoaded]);
 
@@ -57,15 +58,10 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
       ref={component}
-      // PERBAIKAN UTAMA:
-      // Tambahkan kelas opacity-0 jika preloader BELUM selesai.
-      // Ini memastikan komponen Hero tidak terlihat saat tirai terbuka.
-      // GSAP akan mengambil alih properti opacity saat animasi dimulai.
       className={!isLoaded ? "opacity-0" : ""}
     >
       <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
-        {/* Kontainer untuk Teks */}
-        <div className="hero-content"> {/* Kelas untuk target animasi */}
+        <div className="hero-content">
           <h1
             className="mb-8 text-[clamp(3rem,20vmin,20rem)] font-extrabold leading-none tracking-tighter"
             aria-label={
@@ -84,7 +80,6 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
           </span>
         </div>
 
-        {/* Tambahkan kelas "shapes-container" untuk target animasi */}
         <div className="shapes-container mt-16 w-full h-64 md:h-96">
           <Shapes />
         </div>
