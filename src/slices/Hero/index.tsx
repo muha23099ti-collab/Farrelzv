@@ -100,7 +100,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
         </div>
 
         {/* PERBAIKAN: Menghapus `max-w-*` untuk mencegah puzzle terpotong */}
-        <div className="mt-16 w-full h-64 md:h-96">
+        <div className="mt-17 w-full h-64 md:h-96">
           <Shapes />
         </div>
       </div>
