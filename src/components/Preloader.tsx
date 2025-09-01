@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import { usePreloaderState } from "@/providers/PreloaderProvider"; // <-- IMPORT HOOK
 
 export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
   const [stage, setStage] = useState(0); // 0: Fz, 1: Ceklis
+  const { setLoaded } = usePreloaderState(); // <-- GUNAKAN CONTEXT
 
   // Varian untuk mengontrol urutan munculnya garis-garis SVG
   const svgParentVariants: Variants = {
@@ -17,7 +19,7 @@ export default function Preloader() {
       },
     },
   };
-  
+
   // Varian animasi untuk menggambar garis SVG
   const pathVariants: Variants = {
     hidden: { pathLength: 0 },
@@ -32,7 +34,6 @@ export default function Preloader() {
 
   // Varian untuk tirai, sekarang sebagai properti `exit`
   const curtainVariant: Variants = {
-    // Properti custom (i) akan menentukan arah: 0 untuk kiri, 1 untuk kanan
     exit: (i: number) => ({
       y: i === 0 ? "100%" : "-100%", // Tirai kiri ke bawah, kanan ke atas
       transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1], delay: 0.2 },
@@ -40,7 +41,11 @@ export default function Preloader() {
   };
 
   return (
-    <AnimatePresence mode="wait" onExitComplete={() => setIsLoading(false)}>
+    <AnimatePresence
+      mode="wait"
+      // Panggil setLoaded() setelah animasi exit selesai
+      onExitComplete={() => setLoaded()}
+    >
       {isLoading && (
         // Wrapper utama yang akan memiliki animasi exit tirai
         <motion.div className="fixed inset-0 z-[1000] flex">
@@ -117,4 +122,3 @@ export default function Preloader() {
     </AnimatePresence>
   );
 }
-

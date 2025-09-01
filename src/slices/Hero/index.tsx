@@ -5,6 +5,7 @@ import { SliceComponentProps } from "@prismicio/react";
 import { Shapes } from "@/slices/Hero/Shapes";
 import Bounded from "@/components/Bounded";
 import gsap from "gsap";
+import { usePreloaderState } from "@/providers/PreloaderProvider"; // <-- IMPORT HOOK
 
 /**
  * Props for `Hero`.
@@ -16,43 +17,47 @@ export type HeroProps = SliceComponentProps<Content.HeroSlice>;
  */
 const Hero = ({ slice }: HeroProps): JSX.Element => {
   const component = useRef(null);
+  const { isLoaded } = usePreloaderState(); // <-- GUNAKAN CONTEXT
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      // Animasi untuk nama dan jabatan
-      gsap
-        .timeline()
-        .fromTo(
-          ".name-animation",
-          { x: -100, opacity: 0, rotate: -10 },
-          {
-            x: 0,
-            opacity: 1,
-            rotate: 0,
-            ease: "elastic.out(1,0.3)",
-            duration: 1,
-            transformOrigin: "left top",
-            stagger: { each: 0.1, from: "random" },
-          },
-        )
-        .fromTo(
-          ".job-title",
-          {
-            y: 20,
-            opacity: 0,
-            scale: 1.2,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            scale: 1,
-            ease: "elastic.out(1,0.3)",
-          },
-        );
-    }, component);
-    return () => ctx.revert(); // cleanup!
-  }, []);
+    // Hanya jalankan animasi jika preloader sudah selesai
+    if (isLoaded) {
+      let ctx = gsap.context(() => {
+        // Animasi untuk nama dan jabatan
+        gsap
+          .timeline()
+          .fromTo(
+            ".name-animation",
+            { x: -100, opacity: 0, rotate: -10 },
+            {
+              x: 0,
+              opacity: 1,
+              rotate: 0,
+              ease: "elastic.out(1,0.3)",
+              duration: 1,
+              transformOrigin: "left top",
+              stagger: { each: 0.1, from: "random" },
+            },
+          )
+          .fromTo(
+            ".job-title",
+            {
+              y: 20,
+              opacity: 0,
+              scale: 1.2,
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              scale: 1,
+              ease: "elastic.out(1,0.3)",
+            },
+          );
+      }, component);
+      return () => ctx.revert(); // cleanup!
+    }
+  }, [isLoaded]); // <-- Tambahkan isLoaded sebagai dependency
 
   const renderLetters = (name: KeyTextField, key: string) => {
     if (!name) return;
