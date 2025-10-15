@@ -44,12 +44,13 @@ export default async function Page({ params }: { params: Params }) {
         items={projects}
         contentType="Projects"
         viewMoreText={"Lihat Proyek"}
-        fallbackItemImage={settings.data.fallback_item_image} // <-- Penambahan prop yang wajib ada
+        fallbackItemImage={settings.data.fallback_item_image}
       />
     </Bounded>
   );
 }
 
+// FUNGSI INI YANG MEMPERBAIKI ERROR BUILD DI VERCEL
 export async function generateStaticParams() {
   return Object.keys(projectCategoryLabels).map((category) => {
     return { category };
