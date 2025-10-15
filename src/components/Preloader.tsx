@@ -10,7 +10,6 @@ export default function Preloader() {
   const [stage, setStage] = useState(0);
   const { setLoaded } = usePreloaderState();
 
-  // Pendekatan yang lebih aman untuk audio
   const sounds = useMemo(() => {
     return {
       logo: new Howl({
@@ -57,25 +56,15 @@ export default function Preloader() {
   return (
     <AnimatePresence mode="wait" onExitComplete={() => setLoaded()}>
       {isLoading && (
-        <motion.div className="fixed inset-0 z-[1000] flex">
+        // Container utama yang sederhana, hanya untuk positioning
+        <div className="fixed inset-0 z-[1000]">
+          {/* 1. Container untuk SVG, diposisikan di atas & di tengah */}
           <motion.div
-            className="h-full w-1/2 bg-[#0d1117]"
-            custom={0}
-            variants={curtainVariant}
-            exit="exit"
-          />
-          <motion.div
-            className="h-full w-1/2 bg-[#0d1117]"
-            custom={1}
-            variants={curtainVariant}
-            exit="exit"
-          />
-          <motion.div
-            className="absolute inset-0 z-20 flex h-full w-full items-center justify-center"
+            className="absolute inset-0 z-20 grid place-items-center"
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
           >
             <AnimatePresence mode="wait">
-              {/* Animasi Fz */}
+              {/* Stage 0: Animasi Logo Fz */}
               {stage === 0 && (
                 <motion.svg
                   key="fz"
@@ -100,7 +89,7 @@ export default function Preloader() {
                 </motion.svg>
               )}
 
-              {/* Animasi Ceklis */}
+              {/* Stage 1: Animasi Ceklis */}
               {stage === 1 && (
                 <motion.svg
                   key="checkmark"
@@ -126,7 +115,23 @@ export default function Preloader() {
               )}
             </AnimatePresence>
           </motion.div>
-        </motion.div>
+
+          {/* 2. Container untuk Tirai, diposisikan di belakang */}
+          <div className="flex h-full w-full">
+            <motion.div
+              className="h-full w-1/2 bg-[#0d1117]"
+              custom={0}
+              variants={curtainVariant}
+              exit="exit"
+            />
+            <motion.div
+              className="h-full w-1/2 bg-[#0d1117]"
+              custom={1}
+              variants={curtainVariant}
+              exit="exit"
+            />
+          </div>
+        </div>
       )}
     </AnimatePresence>
   );

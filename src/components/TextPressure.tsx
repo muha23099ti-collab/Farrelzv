@@ -1,5 +1,3 @@
-'use client';
-
 // Component ported from https://codepen.io/JuanFuentes/full/rgXKGQ
 
 import { useEffect, useRef, useState } from 'react';
@@ -231,7 +229,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
               color: stroke ? undefined : textColor
             }}
           >
-            {char === ' ' ? '\u00A0' : char}
+            {char}
           </span>
         ))}
       </h1>
