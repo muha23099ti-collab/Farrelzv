@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
 import { PrismicPreview } from "@prismicio/next";
 import { createClient, repositoryName } from "@/prismicio";
-
+import SplashCursor from "@/components/SplashCursor";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Preloader from "@/components/Preloader";
@@ -39,6 +39,7 @@ export default function RootLayout({
           <Footer />
           <PrismicPreview repositoryName={repositoryName} />
         </PreloaderProvider>
+        <SplashCursor />
       </body>
     </html>
   );
