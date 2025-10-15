@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Preloader from "@/components/Preloader";
 import { PreloaderProvider } from "@/providers/PreloaderProvider";
+import SplashCursor from "@/components/SplashCursor";
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         <PreloaderProvider> {/* Hanya PreloaderProvider yang membungkus */}
           <Preloader />
           <Header />
+          <SplashCursor />
           {children}
           <div className="background-gradient absolute inset-0 -z-50 max-h-screen" />
           <div className="pointer-events-none absolute inset-0 -z-40 h-full bg-[url('/noisetexture.jpg')] opacity-20 mix-blend-soft-light"></div>
