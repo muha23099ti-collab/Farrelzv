@@ -304,10 +304,7 @@ interface PageDocumentData {
 export type PageDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<PageDocumentData>, "page", Lang>;
 
-type ProjectDocumentDataSlicesSlice =
-  | ButtonSliceSlice
-  | TextBlockSlice
-  | ImageSlice;
+type ProjectDocumentDataSlicesSlice = TextBlockSlice | ImageSlice;
 
 /**
  * Content for Project documents
@@ -795,72 +792,6 @@ export type BlogPostIndexSlice = prismic.SharedSlice<
 >;
 
 /**
- * Primary content in *ButtonSlice → Default → Primary*
- */
-export interface ButtonSliceSliceDefaultPrimary {
-  /**
-   * Button Text field in *ButtonSlice → Default → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: button_slice.default.primary.button_text
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  button_text: prismic.KeyTextField;
-}
-
-/**
- * Primary content in *ButtonSlice → Items*
- */
-export interface ButtonSliceSliceDefaultItem {
-  /**
-   * Button Link field in *ButtonSlice → Items*
-   *
-   * - **Field Type**: Link
-   * - **Placeholder**: *None*
-   * - **API ID Path**: button_slice.items[].button_link
-   * - **Documentation**: https://prismic.io/docs/fields/link
-   */
-  button_link: prismic.LinkField<
-    string,
-    string,
-    unknown,
-    prismic.FieldState,
-    never
-  >;
-}
-
-/**
- * Default variation for ButtonSlice Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type ButtonSliceSliceDefault = prismic.SharedSliceVariation<
-  "default",
-  Simplify<ButtonSliceSliceDefaultPrimary>,
-  Simplify<ButtonSliceSliceDefaultItem>
->;
-
-/**
- * Slice variation for *ButtonSlice*
- */
-type ButtonSliceSliceVariation = ButtonSliceSliceDefault;
-
-/**
- * ButtonSlice Shared Slice
- *
- * - **API ID**: `button_slice`
- * - **Description**: ButtonSlice
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type ButtonSliceSlice = prismic.SharedSlice<
-  "button_slice",
-  ButtonSliceSliceVariation
->;
-
-/**
  * Primary content in *Experience → Default → Primary*
  */
 export interface ExperienceSliceDefaultPrimary {
@@ -1240,11 +1171,6 @@ declare module "@prismicio/client" {
       BlogPostIndexSliceDefaultPrimary,
       BlogPostIndexSliceVariation,
       BlogPostIndexSliceDefault,
-      ButtonSliceSlice,
-      ButtonSliceSliceDefaultPrimary,
-      ButtonSliceSliceDefaultItem,
-      ButtonSliceSliceVariation,
-      ButtonSliceSliceDefault,
       ExperienceSlice,
       ExperienceSliceDefaultPrimary,
       ExperienceSliceDefaultItem,
