@@ -1,8 +1,8 @@
 {
-  "id": "text_block",
+  "id": "button_slice",
   "type": "SharedSlice",
-  "name": "TextBlock",
-  "description": "TextBlock",
+  "name": "ButtonSlice",
+  "description": "ButtonSlice",
   "variations": [
     {
       "id": "default",
@@ -12,22 +12,15 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "text": {
-          "type": "StructuredText",
-          "config": {
-            "label": "Text",
-            "placeholder": "",
-            "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
-          }
-        },
         "button_text": {
           "type": "Text",
           "config": {
             "label": "Button Text",
             "placeholder": ""
           }
-        },
+        }
+      },
+      "items": {
         "button_link": {
           "type": "Link",
           "config": {
@@ -36,8 +29,7 @@
             "select": null
           }
         }
-      },
-      "items": {}
+      }
     }
   ]
 }

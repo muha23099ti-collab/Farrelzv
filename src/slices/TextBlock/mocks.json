@@ -13,6 +13,18 @@
 						}
 					}
 				]
+			},
+			"button_text": {
+				"__TYPE__": "FieldContent",
+				"value": "control",
+				"type": "Text"
+			},
+			"button_link": {
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "https://slicemachine.dev"
+				}
 			}
 		},
 		"items": []
