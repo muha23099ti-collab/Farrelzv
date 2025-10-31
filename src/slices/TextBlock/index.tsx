@@ -14,17 +14,21 @@ export type TextBlockProps = SliceComponentProps<Content.TextBlockSlice>;
  */
 const TextBlock = ({ slice }: TextBlockProps): JSX.Element => {
   return (
-    <div className="max-w-prose">
+    // INI PERUBAHANNYA: Ganti "max-w-prose" menjadi "max-w-none"
+    <div className="max-w-none"> 
+      
+      {/* Teks utama kamu */}
       <PrismicRichText field={slice.primary.text} />
 
+      {/* Button kamu */}
       {isFilled.link(slice.primary.button_link) &&
         slice.primary.button_text && (
           <div className="mt-8 flex justify-start">
             <Button
-              linkField={slice.primary.button_link} // <-- GANTI DI SINI
+              linkField={slice.primary.button_link}
               label={slice.primary.button_text}
-              className="font-semibold text-slate-900 text-sm py-3 px-4"
-              showIcon={false} // <-- Tambahkan ini agar ikon panah tidak muncul
+              className="font-semibold text-slate-900 text-sm py-2 px-4"
+              showIcon={false}
             />
           </div>
         )}
