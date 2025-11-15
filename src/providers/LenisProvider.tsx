@@ -11,8 +11,8 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
       duration: 1.2,     // Durasi scroll (semakin tinggi, semakin lambat/smooth)
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing khas Lenis
       // smoothTouch: false, // Smooth scroll dinonaktifkan di perangkat sentuh untuk performa
-      smooth: true,
-      direction: 'vertical',
+      // smooth: true,
+      // direction: 'vertical',
     });
 
     // 2. Tautkan Lenis ke requestAnimationFrame (loop browser)
