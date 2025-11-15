@@ -16,6 +16,7 @@
     "@prismicio/react": "^2.7.3",
     "@react-three/drei": "^9.102.6",
     "@react-three/fiber": "^8.15.11",
+    "@studio-freight/lenis": "^1.0.42",
     "@types/three": "^0.158.3",
     "clsx": "^2.0.0",
     "framer-motion": "^12.23.12",

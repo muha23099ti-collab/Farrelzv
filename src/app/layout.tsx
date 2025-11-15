@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Preloader from "@/components/Preloader";
 import { PreloaderProvider } from "@/providers/PreloaderProvider";
 import SplashCursor from "@/components/SplashCursor";
+import LenisProvider from "@/providers/LenisProvider";
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="bg-slate-900">
+      <LenisProvider>
       <body className={clsx(urbanist.className, "relative min-h-screen")}>
         <PreloaderProvider> {/* Hanya PreloaderProvider yang membungkus */}
           <Preloader />
@@ -40,6 +42,7 @@ export default function RootLayout({
           <PrismicPreview repositoryName={repositoryName} />
         </PreloaderProvider>
       </body>
+      </LenisProvider>
     </html>
   );
 }
