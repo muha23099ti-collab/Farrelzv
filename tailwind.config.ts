@@ -1,3 +1,5 @@
+// File: tailwind.config.ts
+
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -7,7 +9,11 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/slices/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {},
+  theme: {
+    // --- KITA MASUKKAN 'extend' DI DALAM 'theme' ---
+    extend: {},
+    // --- BATAS MODIFIKASI ---
+  },
   plugins: [require("@tailwindcss/typography")],
 };
 export default config;

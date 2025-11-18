@@ -304,7 +304,10 @@ interface PageDocumentData {
 export type PageDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<PageDocumentData>, "page", Lang>;
 
-type ProjectDocumentDataSlicesSlice = TextBlockSlice | ImageSlice;
+type ProjectDocumentDataSlicesSlice =
+  | ImageCarouselSlice
+  | TextBlockSlice
+  | ImageSlice;
 
 /**
  * Content for Project documents
@@ -986,6 +989,76 @@ type ImageSliceVariation = ImageSliceDefault;
 export type ImageSlice = prismic.SharedSlice<"image", ImageSliceVariation>;
 
 /**
+ * Primary content in *ImageCarousel → Default → Primary*
+ */
+export interface ImageCarouselSliceDefaultPrimary {
+  /**
+   * title field in *ImageCarousel → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: image_carousel.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * description field in *ImageCarousel → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: image_carousel.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *ImageCarousel → Items*
+ */
+export interface ImageCarouselSliceDefaultItem {
+  /**
+   * carousel_image field in *ImageCarousel → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: image_carousel.items[].carousel_image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  carousel_image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for ImageCarousel Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ImageCarouselSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ImageCarouselSliceDefaultPrimary>,
+  Simplify<ImageCarouselSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *ImageCarousel*
+ */
+type ImageCarouselSliceVariation = ImageCarouselSliceDefault;
+
+/**
+ * ImageCarousel Shared Slice
+ *
+ * - **API ID**: `image_carousel`
+ * - **Description**: ImageCarousel
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ImageCarouselSlice = prismic.SharedSlice<
+  "image_carousel",
+  ImageCarouselSliceVariation
+>;
+
+/**
  * Primary content in *TechList → Default → Primary*
  */
 export interface TechListSliceDefaultPrimary {
@@ -1097,6 +1170,21 @@ export interface TextBlockSliceDefaultPrimary {
 }
 
 /**
+ * Primary content in *TextBlock → Items*
+ */
+export interface TextBlockSliceDefaultItem {
+  /**
+   * carousel_image field in *TextBlock → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: text_block.items[].carousel_image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  carousel_image: prismic.ImageField<never>;
+}
+
+/**
  * Default variation for TextBlock Slice
  *
  * - **API ID**: `default`
@@ -1106,7 +1194,7 @@ export interface TextBlockSliceDefaultPrimary {
 export type TextBlockSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<TextBlockSliceDefaultPrimary>,
-  never
+  Simplify<TextBlockSliceDefaultItem>
 >;
 
 /**
@@ -1184,6 +1272,11 @@ declare module "@prismicio/client" {
       ImageSliceDefaultPrimary,
       ImageSliceVariation,
       ImageSliceDefault,
+      ImageCarouselSlice,
+      ImageCarouselSliceDefaultPrimary,
+      ImageCarouselSliceDefaultItem,
+      ImageCarouselSliceVariation,
+      ImageCarouselSliceDefault,
       TechListSlice,
       TechListSliceDefaultPrimary,
       TechListSliceDefaultItem,
@@ -1191,6 +1284,7 @@ declare module "@prismicio/client" {
       TechListSliceDefault,
       TextBlockSlice,
       TextBlockSliceDefaultPrimary,
+      TextBlockSliceDefaultItem,
       TextBlockSliceVariation,
       TextBlockSliceDefault,
     };

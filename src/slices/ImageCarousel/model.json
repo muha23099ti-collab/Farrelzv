@@ -1,8 +1,8 @@
 {
-  "id": "text_block",
+  "id": "image_carousel",
   "type": "SharedSlice",
-  "name": "TextBlock",
-  "description": "TextBlock",
+  "name": "ImageCarousel",
+  "description": "ImageCarousel",
   "variations": [
     {
       "id": "default",
@@ -12,28 +12,22 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "text": {
+        "title": {
           "type": "StructuredText",
           "config": {
-            "label": "Text",
+            "label": "title",
             "placeholder": "",
             "allowTargetBlank": true,
             "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
           }
         },
-        "button_text": {
-          "type": "Text",
+        "description": {
+          "type": "StructuredText",
           "config": {
-            "label": "Button Text",
-            "placeholder": ""
-          }
-        },
-        "button_link": {
-          "type": "Link",
-          "config": {
-            "label": "Button Link",
+            "label": "description",
             "placeholder": "",
-            "select": null
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
           }
         }
       },

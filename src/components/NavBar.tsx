@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 // Daftar kategori proyek Anda
 const projectCategories = [
   { name: "Digital Marketing", uid: "digital-marketing" },
-  { name: "Software Development", uid: "software-development" },
+  // { name: "Software Development", uid: "software-development" },
   { name: "3d & Graphic Design", uid: "3d-graphic-design" },
   { name: "Project & Program Management", uid: "project-program-management" },
   { name: "Video Editing", uid: "video-editing" },
