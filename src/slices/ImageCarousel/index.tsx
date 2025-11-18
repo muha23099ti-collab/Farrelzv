@@ -13,7 +13,7 @@ export type ImageCarouselProps =
   SliceComponentProps<Content.ImageCarouselSlice>;
 
 const ImageCarousel = ({ slice }: ImageCarouselProps): JSX.Element => {
-  const hasImages = isFilled.group(slice.items);
+  const hasImages = slice.items.length > 0;
 
   gsap.registerPlugin(ScrollTrigger);
 
