@@ -30,13 +30,11 @@ export default function ContentList({
   const [hovering, setHovering] = useState(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
   
-  // State baru untuk menyimpan dimensi gambar yang di-hover
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   const urlPrefix = contentType === "Blogs" ? "/blog" : "/project";
 
   useEffect(() => {
-    // Animate list-items in with a stagger
     let ctx = gsap.context(() => {
       itemsRef.current.forEach((item) => {
         gsap.fromTo(
@@ -61,19 +59,16 @@ export default function ContentList({
         );
       });
 
-      return () => ctx.revert(); // cleanup!
+      return () => ctx.revert();
     }, component);
   }, []);
 
   useEffect(() => {
-    // Mouse move event listener
     const handleMouseMove = (e: MouseEvent) => {
       const mousePos = { x: e.clientX, y: e.clientY + window.scrollY };
-      // Calculate speed and direction
       const speed = Math.sqrt(Math.pow(mousePos.x - lastMousePos.current.x, 2));
 
       let ctx = gsap.context(() => {
-        // Animate the image holder
         if (currentItem !== null && revealRef.current) {
           const maxY = window.scrollY + window.innerHeight - imageDimensions.height;
           const maxX = window.innerWidth - imageDimensions.width;
@@ -81,13 +76,13 @@ export default function ContentList({
           gsap.to(revealRef.current, {
             x: gsap.utils.clamp(0, maxX, mousePos.x - imageDimensions.width / 2),
             y: gsap.utils.clamp(0, maxY, mousePos.y - imageDimensions.height / 2),
-            rotation: speed * (mousePos.x > lastMousePos.current.x ? 1 : -1), // Apply rotation based on speed and direction
+            rotation: speed * (mousePos.x > lastMousePos.current.x ? 1 : -1),
             ease: "back.out(2)",
             duration: 1.3,
           });
         }
         lastMousePos.current = mousePos;
-        return () => ctx.revert(); // cleanup!
+        return () => ctx.revert();
       }, component);
     };
 
@@ -99,7 +94,6 @@ export default function ContentList({
   }, [hovering, currentItem, imageDimensions]);
 
   useEffect(() => {
-    // Animate opacity and visibility based on hovering state
     let ctx = gsap.context(() => {
       gsap.to(revealRef.current, {
         opacity: hovering ? 1 : 0,
@@ -127,7 +121,7 @@ export default function ContentList({
 
     if (image && image.dimensions) {
       const { width, height } = image.dimensions;
-      const maxWidth = 300; // Batas lebar maksimum
+      const maxWidth = 300;
       
       if (width && height) {
         const ratio = height / width;
@@ -146,7 +140,6 @@ export default function ContentList({
   const contentImages = items.map((item) => {
     let imageField;
 
-    // Type guard to check if the item is a ProjectDocument
     if (item.type === "project") {
       imageField = item.data.hover_image;
     } else {
@@ -157,10 +150,9 @@ export default function ContentList({
       ? imageField
       : fallbackItemImage;
       
-    return asImageSrc(image); // Ambil URL asli tanpa mengubah ukuran
+    return asImageSrc(image);
   });
 
-  // Preload images
   useEffect(() => {
     contentImages.forEach((url) => {
       if (!url) return;
@@ -187,7 +179,8 @@ export default function ContentList({
           >
             <a
               href={`${urlPrefix}/${post.uid}`}
-              className="flex flex-col justify-between border-t border-t-slate-100 py-10  text-slate-200 md:flex-row "
+              // PERUBAHAN DI SINI: opacity-50 hover:opacity-100 transition-opacity duration-500
+              className="flex flex-col justify-between border-t border-t-slate-100 py-10 text-slate-200 md:flex-row opacity-50 hover:opacity-100 transition-opacity duration-500"
               aria-label={post.data.title || ""}
             >
               <div className="flex flex-col">
