@@ -49,7 +49,7 @@ export default function Preloader() {
   const curtainVariant: Variants = {
     exit: (i: number) => ({
       y: i === 0 ? "100%" : "-100%",
-      transition: { duration: 0.8, ease: [0.85, 0, 0.15, 1], delay: 0.2 },
+      transition: { duration: 0.7, ease: [0.85, 0, 0.15, 1], delay: 0.2 },
     }),
   };
 

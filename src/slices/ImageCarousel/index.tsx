@@ -128,6 +128,7 @@ const ImageCarousel = ({ slice }: ImageCarouselProps): JSX.Element => {
               onClick={() => handleImageClick(item.carousel_image, index)}
             >
               {/* WRAPPER ANIMASI THUMBNAIL */}
+              {/* WRAPPER ANIMASI THUMBNAIL */}
               {/* Kita pisah motion.div dari li biar layoutId nempel ketat sama gambar */}
               <motion.div
                  layoutId={`image-expand-${index}`}

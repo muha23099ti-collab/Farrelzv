@@ -1,3 +1,5 @@
+// File: src/app/projects/[category]/page.tsx
+
 import { createClient } from "@/prismicio";
 import * as prismic from "@prismicio/client";
 import { notFound } from "next/navigation";
@@ -10,26 +12,23 @@ type Params = { category: string };
 const projectCategoryLabels: { [key: string]: string } = {
   "digital-marketing": "Digital Marketing",
   "software-development": "Software Development",
-  "3d-graphic-design": "3D & Graphic Design",
+  "3d-graphic-design": "Graphic Designer", 
   "project-program-management": "Project & Program Management",
-  "video-editing": "Video Editing",
+  "video-editing": "Video Editing", 
 };
 
 export default async function Page({ params }: { params: Params }) {
   const client = createClient();
   const categoryLabel = projectCategoryLabels[params.category];
-
   if (!categoryLabel) {
     notFound();
   }
 
-  // Mengambil data proyek berdasarkan kategori
   const projects = await client.getAllByType("project", {
     filters: [prismic.filter.at("my.project.category", categoryLabel)],
     orderings: [{ field: "my.project.date", direction: "desc" }],
   });
 
-  // Mengambil data settings untuk fallback image
   const settings = await client.getSingle("settings");
 
   return (
@@ -50,7 +49,6 @@ export default async function Page({ params }: { params: Params }) {
   );
 }
 
-// FUNGSI INI YANG MEMPERBAIKI ERROR BUILD DI VERCEL
 export async function generateStaticParams() {
   return Object.keys(projectCategoryLabels).map((category) => {
     return { category };
