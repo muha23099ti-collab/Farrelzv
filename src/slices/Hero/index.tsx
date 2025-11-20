@@ -7,7 +7,7 @@ import Bounded from "@/components/Bounded";
 import gsap from "gsap";
 import { Shapes } from "@/slices/Hero/Shapes";
 import { usePreloaderState } from "@/providers/PreloaderProvider";
-import TextPressure from "@/components/TextPressure"; // <-- Impor komponen TextPressure
+import TextPressure from "@/components/TextPressure";
 
 /**
  * Props for `Hero`.
@@ -21,7 +21,6 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
   const component = useRef(null);
   const { isLoaded } = usePreloaderState();
 
-  // ANIMASI GSAP TETAP DI SINI, TIDAK DIUBAH
   useEffect(() => {
     if (isLoaded) {
       let ctx = gsap.context(() => {
@@ -54,7 +53,6 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
     }
   }, [isLoaded]);
 
-  // Gabungkan nama dari Prismic untuk TextPressure
   const fullName = `${slice.primary.first_name || ""} ${slice.primary.last_name || ""}`.trim();
 
   return (
@@ -65,19 +63,18 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
       className={!isLoaded ? "opacity-0" : ""}
     >
       <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
-        <div className="hero-content">
-          {/* GANTI BAGIAN h1 DENGAN TextPressure */}
+        <div className="hero-content w-full max-w-full"> {/* Tambahkan w-full max-w-full di sini juga untuk keamanan */}
+          
+          {/* PERBAIKAN DISINI: Tambahkan w-full, max-w-full, dan overflow-hidden */}
           <div
-            className="mb-8 text-[clamp(3rem,20vmin,20rem)] font-extrabold leading-none tracking-tighter"
-            aria-label={
-              slice.primary.first_name + " " + slice.primary.last_name
-            }
+            className="mb-8 w-full max-w-full overflow-hidden text-[clamp(3rem,20vmin,20rem)] font-extrabold leading-none tracking-tighter"
+            aria-label={slice.primary.first_name + " " + slice.primary.last_name}
           >
             <TextPressure
               text={fullName}
-              textColor="#cbd5e1" // Warna slate-300
+              textColor="#cbd5e1"
               stroke={true}
-              strokeColor="#64748b" // Warna slate-500
+              strokeColor="#64748b"
             />
           </div>
 

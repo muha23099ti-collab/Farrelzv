@@ -1,7 +1,5 @@
 'use client';
 
-// Component ported from https://codepen.io/JuanFuentes/full/rgXKGQ
-
 import { useEffect, useRef, useState } from 'react';
 
 interface TextPressureProps {
@@ -44,7 +42,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const mouseRef = useRef({ x: 0, y: 0 });
   const cursorRef = useRef({ x: 0, y: 0 });
   
-  // Ref baru untuk melacak apakah user sudah berinteraksi
+  // FIX 1: Ref untuk melacak interaksi user
   const hasInteracted = useRef(false);
 
   const [fontSize, setFontSize] = useState(minFontSize);
@@ -73,7 +71,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
       cursorRef.current.y = t.clientY;
     };
 
-    // Tambahkan listener touchstart agar responsif saat disentuh pertama kali
+    // FIX 2: Tambahkan touchstart agar responsif instan
     const handleTouchStart = (e: TouchEvent) => {
       hasInteracted.current = true;
       const t = e.touches[0];
@@ -82,8 +80,9 @@ const TextPressure: React.FC<TextPressureProps> = ({
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    // Gunakan passive: true agar scroll tetap lancar
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
 
     if (containerRef.current) {
       const { left, top, width, height } = containerRef.current.getBoundingClientRect();
@@ -133,8 +132,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
   useEffect(() => {
     let rafId: number;
     const animate = () => {
-      // LOGIKA BARU: Jika belum ada interaksi (seperti di mobile saat awal load),
-      // paksa kursor target ke tengah container agar efek tetap terlihat aktif.
+      // FIX 3: Jika belum disentuh, paksa cursor target ke tengah container
+      // Ini membuat efek "tertekan" di tengah secara default saat load
       if (!hasInteracted.current && containerRef.current) {
          const { left, top, width, height } = containerRef.current.getBoundingClientRect();
          cursorRef.current.x = left + width / 2;
