@@ -1,37 +1,29 @@
-// File: src/components/Preloader.tsx
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { usePreloaderState } from "@/providers/PreloaderProvider";
-
-// --- (Hapus import Howl) ---
+import { Howl } from "howler";
 
 export default function Preloader() {
-  // Default loading false dulu biar gak nge-flicker
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [stage, setStage] = useState(0);
   const { setLoaded } = usePreloaderState();
 
-  // --- LOGIC BARU: CEK SESSION STORAGE ---
-  useEffect(() => {
-    // Cek apakah user sudah pernah lihat preloader di sesi ini
-    const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
-
-    if (hasSeenPreloader) {
-      // Kalau sudah pernah lihat, langsung set loaded dan jangan tampilkan preloader
-      setLoaded();
-      setIsLoading(false);
-    } else {
-      // Kalau belum, tampilkan preloader
-      setIsLoading(true);
-      // Tandai bahwa user sudah melihat preloader
-      sessionStorage.setItem("hasSeenPreloader", "true");
-    }
-  }, [setLoaded]);
-
-  // --- HAPUS LOGIC SUARA (useMemo sounds) ---
+  const sounds = useMemo(() => {
+    return {
+      logo: new Howl({
+        src: ["/sounds/logo-appear.mp3"],
+        volume: 0.5,
+        preload: true,
+      }),
+      checkmark: new Howl({
+        src: ["/sounds/success-check.mp3"],
+        volume: 0.6,
+        preload: true,
+      }),
+    };
+  }, []);
 
   const svgParentVariants: Variants = {
     hidden: { opacity: 0 },
@@ -61,19 +53,18 @@ export default function Preloader() {
     }),
   };
 
-  // Kalau isLoading false (karena udah pernah visit), render null langsung
-  if (!isLoading) return null;
-
   return (
     <AnimatePresence mode="wait" onExitComplete={() => setLoaded()}>
       {isLoading && (
+        // Container utama yang sederhana, hanya untuk positioning
         <div className="fixed inset-0 z-[1000]">
+          {/* 1. Container untuk SVG, diposisikan di atas & di tengah */}
           <motion.div
             className="absolute inset-0 z-20 grid place-items-center"
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
           >
             <AnimatePresence mode="wait">
-              {/* Stage 0: Animasi Logo Fz (TANPA SUARA) */}
+              {/* Stage 0: Animasi Logo Fz */}
               {stage === 0 && (
                 <motion.svg
                   key="fz"
@@ -84,7 +75,9 @@ export default function Preloader() {
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0 }}
-                  // Hapus onAnimationStart (suara)
+                  onAnimationStart={() => {
+                    setTimeout(() => sounds.logo.play(), 200);
+                  }}
                   onAnimationComplete={() => setStage(1)}
                 >
                   <motion.line x1="40" y1="40" x2="40" y2="110" stroke="#FFFFFF" strokeWidth="5" variants={pathVariants} />
@@ -96,7 +89,7 @@ export default function Preloader() {
                 </motion.svg>
               )}
 
-              {/* Stage 1: Animasi Ceklis (TANPA SUARA) */}
+              {/* Stage 1: Animasi Ceklis */}
               {stage === 1 && (
                 <motion.svg
                   key="checkmark"
@@ -106,7 +99,9 @@ export default function Preloader() {
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0 }}
-                  // Hapus onAnimationStart (suara)
+                  onAnimationStart={() => {
+                    setTimeout(() => sounds.checkmark.play(), 150);
+                  }}
                   onAnimationComplete={() => setIsLoading(false)}
                 >
                   <motion.path
@@ -121,7 +116,7 @@ export default function Preloader() {
             </AnimatePresence>
           </motion.div>
 
-          {/* Container Tirai */}
+          {/* 2. Container untuk Tirai, diposisikan di belakang */}
           <div className="flex h-full w-full">
             <motion.div
               className="h-full w-1/2 bg-[#0d1117]"
