@@ -43,6 +43,9 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
   const mouseRef = useRef({ x: 0, y: 0 });
   const cursorRef = useRef({ x: 0, y: 0 });
+  
+  // Ref baru untuk melacak apakah user sudah berinteraksi
+  const hasInteracted = useRef(false);
 
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
@@ -58,10 +61,21 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      hasInteracted.current = true;
       cursorRef.current.x = e.clientX;
       cursorRef.current.y = e.clientY;
     };
+    
     const handleTouchMove = (e: TouchEvent) => {
+      hasInteracted.current = true;
+      const t = e.touches[0];
+      cursorRef.current.x = t.clientX;
+      cursorRef.current.y = t.clientY;
+    };
+
+    // Tambahkan listener touchstart agar responsif saat disentuh pertama kali
+    const handleTouchStart = (e: TouchEvent) => {
+      hasInteracted.current = true;
       const t = e.touches[0];
       cursorRef.current.x = t.clientX;
       cursorRef.current.y = t.clientY;
@@ -69,6 +83,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
 
     if (containerRef.current) {
       const { left, top, width, height } = containerRef.current.getBoundingClientRect();
@@ -81,6 +96,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchStart);
     };
   }, []);
 
@@ -117,6 +133,14 @@ const TextPressure: React.FC<TextPressureProps> = ({
   useEffect(() => {
     let rafId: number;
     const animate = () => {
+      // LOGIKA BARU: Jika belum ada interaksi (seperti di mobile saat awal load),
+      // paksa kursor target ke tengah container agar efek tetap terlihat aktif.
+      if (!hasInteracted.current && containerRef.current) {
+         const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+         cursorRef.current.x = left + width / 2;
+         cursorRef.current.y = top + height / 2;
+      }
+
       mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
       mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 

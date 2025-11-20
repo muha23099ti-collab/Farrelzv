@@ -1,16 +1,32 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react"; // 1. Tambah useEffect
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { usePreloaderState } from "@/providers/PreloaderProvider";
 import { Howl } from "howler";
+import { usePathname } from "next/navigation"; // 2. Tambah usePathname
 
 export default function Preloader() {
+  const pathname = usePathname(); // Ambil path saat ini
+  const isHome = pathname === "/"; // Cek apakah ini halaman Home
+
   const [isLoading, setIsLoading] = useState(true);
   const [stage, setStage] = useState(0);
   const { setLoaded } = usePreloaderState();
 
+  // 3. Logika untuk bypass animasi jika bukan Home page
+  useEffect(() => {
+    if (!isHome) {
+      // Jika bukan home, langsung matikan loading & buka akses ke halaman
+      setIsLoading(false);
+      setLoaded();
+    }
+  }, [isHome, setLoaded]);
+
   const sounds = useMemo(() => {
+    // Agar sound tidak di-load jika bukan di home (opsional, untuk performa)
+    if (!isHome) return { logo: null, checkmark: null }; 
+    
     return {
       logo: new Howl({
         src: ["/sounds/logo-appear.mp3"],
@@ -23,7 +39,7 @@ export default function Preloader() {
         preload: true,
       }),
     };
-  }, []);
+  }, [isHome]);
 
   const svgParentVariants: Variants = {
     hidden: { opacity: 0 },
@@ -53,18 +69,18 @@ export default function Preloader() {
     }),
   };
 
+  // Jika bukan Home, jangan render apapun (return null)
+  if (!isHome) return null;
+
   return (
     <AnimatePresence mode="wait" onExitComplete={() => setLoaded()}>
       {isLoading && (
-        // Container utama yang sederhana, hanya untuk positioning
         <div className="fixed inset-0 z-[1000]">
-          {/* 1. Container untuk SVG, diposisikan di atas & di tengah */}
           <motion.div
             className="absolute inset-0 z-20 grid place-items-center"
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
           >
             <AnimatePresence mode="wait">
-              {/* Stage 0: Animasi Logo Fz */}
               {stage === 0 && (
                 <motion.svg
                   key="fz"
@@ -76,10 +92,12 @@ export default function Preloader() {
                   animate="visible"
                   exit={{ opacity: 0 }}
                   onAnimationStart={() => {
-                    setTimeout(() => sounds.logo.play(), 200);
+                    // Tambahkan pengecekan sound ada atau tidak
+                    setTimeout(() => sounds.logo?.play(), 200);
                   }}
                   onAnimationComplete={() => setStage(1)}
                 >
+                  {/* ... Code SVG Logo Fz tetap sama ... */}
                   <motion.line x1="40" y1="40" x2="40" y2="110" stroke="#FFFFFF" strokeWidth="5" variants={pathVariants} />
                   <motion.line x1="40" y1="40" x2="80" y2="40" stroke="#FFFFFF" strokeWidth="5" variants={pathVariants} />
                   <motion.line x1="40" y1="75" x2="70" y2="75" stroke="#FFFFFF" strokeWidth="5" variants={pathVariants} />
@@ -89,7 +107,6 @@ export default function Preloader() {
                 </motion.svg>
               )}
 
-              {/* Stage 1: Animasi Ceklis */}
               {stage === 1 && (
                 <motion.svg
                   key="checkmark"
@@ -100,10 +117,12 @@ export default function Preloader() {
                   animate="visible"
                   exit={{ opacity: 0 }}
                   onAnimationStart={() => {
-                    setTimeout(() => sounds.checkmark.play(), 150);
+                    // Tambahkan pengecekan sound ada atau tidak
+                    setTimeout(() => sounds.checkmark?.play(), 150);
                   }}
                   onAnimationComplete={() => setIsLoading(false)}
                 >
+                  {/* ... Code SVG Checkmark tetap sama ... */}
                   <motion.path
                     d="M30 80 L65 115 L120 40"
                     fill="transparent"
@@ -116,7 +135,6 @@ export default function Preloader() {
             </AnimatePresence>
           </motion.div>
 
-          {/* 2. Container untuk Tirai, diposisikan di belakang */}
           <div className="flex h-full w-full">
             <motion.div
               className="h-full w-1/2 bg-[#0d1117]"
