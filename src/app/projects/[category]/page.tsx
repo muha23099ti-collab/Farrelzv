@@ -37,12 +37,12 @@ export default async function Page({ params }: { params: Params }) {
         {categoryLabel}
       </Heading>
       <div className="prose prose-xl prose-invert mb-10">
-        Ini hasil kerja saya pada bidang {categoryLabel}.
+        Results of My Work |  {categoryLabel}.
       </div>
       <ContentList
         items={projects}
         contentType="Projects"
-        viewMoreText={"Lihat Proyek"}
+        viewMoreText={"Details"}
         fallbackItemImage={settings.data.fallback_item_image}
       />
     </Bounded>

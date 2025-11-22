@@ -10,16 +10,16 @@ import { MdMenu, MdClose, MdArrowDropDown } from "react-icons/md";
 import Button from "./Button";
 import { usePathname } from "next/navigation";
 
-// Daftar kategori proyek Anda
+// Sub Page Project
 const projectCategories = [
+  { name: "Project & Program Management", uid: "project-program-management" },
   { name: "Digital Marketing", uid: "digital-marketing" },
   // { name: "Software Development", uid: "software-development" },
   { name: "3d & Graphic Design", uid: "3d-graphic-design" },
-  { name: "Project & Program Management", uid: "project-program-management" },
-  { name: "Video Editing", uid: "video-editing" },
+  // { name: "Video Editing", uid: "video-editing" },
 ];
 
-// Komponen baru untuk Panel Menu Mobile yang akan di-render di Portal
+// Komponen Baru untuk mobile
 function MobileMenuPanel({ settings, pathname, open, setOpen }: { settings: Content.SettingsDocument; pathname: string; open: boolean; setOpen: (open: boolean) => void; }) {
   const [isMobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
